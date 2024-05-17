@@ -1,7 +1,8 @@
-import Heading from "../ui/Heading";
-import Row from "../ui/Row";
+import { FC } from "react";
+import Heading from "@/ui/Heading";
+import Row from "@/ui/Row";
 
-function Account() {
+const Account: FC = () => {
   return (
     <>
       <Heading as="h1">Update your account</Heading>
@@ -17,6 +18,6 @@ function Account() {
       </Row>
     </>
   );
-}
+};
 
 export default Account;

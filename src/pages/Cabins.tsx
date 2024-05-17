@@ -1,13 +1,14 @@
-import Heading from "../ui/Heading";
-import Row from "../ui/Row";
+import { FC } from "react";
+import Heading from "@/ui/Heading";
+import Row from "@/ui/Row";
 
-function Cabins() {
+const Cabins: FC = () => {
   return (
     <Row type="horizontal">
       <Heading as="h1">All cabins</Heading>
       <p>TEST</p>
     </Row>
   );
-}
+};
 
 export default Cabins;

@@ -1,3 +1,4 @@
+import { FC } from "react";
 import styled from "styled-components";
 
 const LoginLayout = styled.main`
@@ -10,8 +11,12 @@ const LoginLayout = styled.main`
   background-color: var(--color-grey-50);
 `;
 
-function Login() {
-  return <LoginLayout>Login</LoginLayout>;
-}
+const Login: FC = () => {
+  return (
+    <>
+      <LoginLayout>Login</LoginLayout>
+    </>
+  );
+};
 
 export default Login;

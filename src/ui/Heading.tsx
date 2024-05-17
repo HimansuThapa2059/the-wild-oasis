@@ -11,14 +11,14 @@ const Heading = styled.h1<HeadingProps>`
     css`
       font-size: 3rem;
       font-weight: 600;
-      color: #62ccd0;
+      color: #464646;
     `}
   ${(props) =>
     props.as === "h2" &&
     css`
       font-size: 2rem;
       font-weight: 600;
-      color: #62ccd0;
+      color: #464646;
     `}
 
   ${(props) =>
@@ -26,7 +26,7 @@ const Heading = styled.h1<HeadingProps>`
     css`
       font-size: 2rem;
       font-weight: 500;
-      color: #62ccd0;
+      color: #464646;
     `}
 `;
 

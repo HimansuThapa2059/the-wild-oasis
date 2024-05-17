@@ -25,7 +25,7 @@ const sizes: CSSObject = {
   `,
 };
 
-const variations = {
+const variations: CSSObject = {
   primary: css`
     color: var(--color-brand-50);
     background-color: var(--color-brand-600);
@@ -63,8 +63,8 @@ const Button = styled.button<ButtonProps>`
 `;
 
 Button.defaultProps = {
-  variation: "primary",
   size: "medium",
+  variation: "primary",
 };
 
 export default Button;
