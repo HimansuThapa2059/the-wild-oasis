@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+type StyledListProps = {
+  position: { x: number; y: number };
+};
+
 const StyledMenu = styled.div`
   display: flex;
   align-items: center;
@@ -25,7 +29,7 @@ const StyledToggle = styled.button`
   }
 `;
 
-const StyledList = styled.ul`
+const StyledList = styled.ul<StyledListProps>`
   position: fixed;
 
   background-color: var(--color-grey-0);
