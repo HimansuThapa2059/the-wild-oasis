@@ -1,3 +1,4 @@
+import { FC } from "react";
 import styled from "styled-components";
 
 const StyledLogo = styled.div`
@@ -9,12 +10,12 @@ const Img = styled.img`
   width: auto;
 `;
 
-function Logo() {
+const Logo: FC = () => {
   return (
     <StyledLogo>
       <Img src="/logo-light.png" alt="Logo" />
     </StyledLogo>
   );
-}
+};
 
 export default Logo;
