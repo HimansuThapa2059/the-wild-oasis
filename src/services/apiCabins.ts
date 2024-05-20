@@ -1,5 +1,5 @@
 import { Database } from "@/supabase/types/database.types";
-import supabase from "./supabase";
+import supabase from "../supabase/supabase";
 
 export const getCabins = async (): Promise<
   Database["public"]["Tables"]["cabins"]["Row"][]
@@ -11,4 +11,12 @@ export const getCabins = async (): Promise<
   }
 
   return data as Database["public"]["Tables"]["cabins"]["Row"][];
+};
+
+export const deleteCabin = async (id: number): Promise<void> => {
+  const { error } = await supabase.from("cabins").delete().eq("id", id);
+  if (error) {
+    console.error(error);
+    throw new Error("Unable to delete cabin...");
+  }
 };

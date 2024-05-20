@@ -31,12 +31,10 @@ const TableHeader = styled.header`
 `;
 
 const CabinTable: FC = () => {
-  const {
-    isLoading,
-    data: cabins,
-    error,
-  } = useQuery<Database["public"]["Tables"]["cabins"]["Row"][]>({
-    queryKey: ["cabin"],
+  const { isLoading, data: cabins } = useQuery<
+    Database["public"]["Tables"]["cabins"]["Row"][]
+  >({
+    queryKey: ["cabins"],
     queryFn: getCabins,
   });
 

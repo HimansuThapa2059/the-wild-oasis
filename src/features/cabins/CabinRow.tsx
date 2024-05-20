@@ -1,12 +1,16 @@
+import { deleteCabin } from "@/services/apiCabins";
 import { Database } from "@/supabase/types/database.types";
 import Button from "@/ui/Button";
 import { formatCurrency } from "@/utils/helpers";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FC } from "react";
+import toast from "react-hot-toast";
 import styled from "styled-components";
 
 type CabinRowProps = {
   cabin: Database["public"]["Tables"]["cabins"]["Row"];
 };
+
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
@@ -47,15 +51,45 @@ const Discount = styled.div`
 `;
 
 const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
-  const { discount, image, maxCapacity, name, regularPrice } = cabin;
+  const queryClient = useQueryClient();
+
+  const {
+    id: cabinId,
+    discount,
+    image,
+    maxCapacity,
+    name,
+    regularPrice,
+  } = cabin;
+
+  const handleNotFound = (
+    event: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    event.currentTarget.src = "/not-found.jpg";
+  };
+
+  const { isLoading: isDeleting, mutate } = useMutation({
+    mutationFn: deleteCabin,
+    onSuccess: () => {
+      toast.success("Cabin deleted sucessfully");
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   return (
     <TableRow role="row">
-      <Img src={image ? image : "/not-found.jpg"} />
+      <Img src={image ? image : ""} onError={handleNotFound} />
       <Cabin>{name}</Cabin>
       <div>Fits up to {maxCapacity} guests</div>
       <Price>{regularPrice ? formatCurrency(regularPrice) : ""}</Price>
       <Discount>{discount ? formatCurrency(discount) : ""}</Discount>
-      <Button $variation="primary" $size="small">
+      <Button
+        $variation="primary"
+        $size="small"
+        onClick={() => mutate(cabinId)}
+        disabled={isDeleting}
+      >
         Delete
       </Button>
     </TableRow>
