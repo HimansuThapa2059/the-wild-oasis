@@ -1,4 +1,4 @@
-import { Database } from "@/data/types/database.types";
+import { Database } from "@/supabase/types/database.types";
 import supabase from "./supabase";
 
 export const getCabins = async (): Promise<
