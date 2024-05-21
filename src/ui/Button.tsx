@@ -1,7 +1,7 @@
 import styled, { CSSObject, css } from "styled-components";
 
 type ButtonProps = {
-  $size: "small" | "medium" | "large";
+  $size?: "small" | "medium" | "large";
   $variation?: "primary" | "secondary" | "danger";
 };
 
