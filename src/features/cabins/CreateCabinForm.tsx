@@ -15,9 +15,10 @@ type FormValues = {
   regularPrice: number;
   discount: number;
   description: string;
+  image: FileList;
 };
 
-function CreateCabinForm() {
+const CreateCabinForm = () => {
   const { register, handleSubmit, reset, getValues, formState } =
     useForm<FormValues>();
   const { errors } = formState;
@@ -37,7 +38,8 @@ function CreateCabinForm() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    mutate(data);
+    console.log(data);
+    mutate({ ...data, image: data.image[0] });
   };
 
   const onError = () => {
@@ -115,7 +117,14 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          type="file"
+          {...register("image", {
+            required: "This field is required",
+          })}
+        />
       </FormRow>
 
       <FormRow>
@@ -127,6 +136,6 @@ function CreateCabinForm() {
       </FormRow>
     </Form>
   );
-}
+};
 
 export default CreateCabinForm;
