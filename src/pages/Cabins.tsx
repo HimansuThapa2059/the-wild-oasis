@@ -1,12 +1,12 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import Heading from "@/ui/Heading";
 import Row from "@/ui/Row";
 import CabinTable from "@/features/cabins/CabinTable";
 import Button from "@/ui/Button";
 import CreateCabinForm from "@/features/cabins/CreateCabinForm";
 
-const Cabins: FC = () => {
-  const [showForm, setShowForm] = useState<boolean>(false);
+const Cabins: React.FC = () => {
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <>
