@@ -4,11 +4,10 @@ import Button from "@/ui/Button";
 import FileInput from "@/ui/FileInput";
 import Textarea from "@/ui/Textarea";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEditCabin } from "@/services/apiCabins";
-import toast from "react-hot-toast";
 import FormRow from "@/ui/FormRow";
 import { Database } from "@/supabase/types/database.types";
+import { useCreateCabin } from "./hooks/useCreateCabin";
+import { useEditCabin } from "./hooks/useEditCabin";
 
 type FormValues = {
   name: string;
@@ -19,24 +18,17 @@ type FormValues = {
   image: FileList | string;
 };
 
-type PassingParams = {
-  newCabinData: {
-    name: string;
-    maxCapacity: number;
-    regularPrice: number;
-    discount: number;
-    description: string;
-    image: File | string;
-    id?: number;
-  };
-};
 type CreateCabinFormProps = {
   cabinToEdit?: Database["public"]["Tables"]["cabins"]["Row"];
 };
 
 const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
-  cabinToEdit = {},
+  cabinToEdit = { id: undefined },
 }) => {
+  const { isCreating, createCabin } = useCreateCabin();
+  const { isEditing, editCabin } = useEditCabin();
+  const isWorking = isCreating || isEditing;
+
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
 
@@ -44,41 +36,15 @@ const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
     useForm<FormValues>({ defaultValues: isEditSession ? editValues : {} });
   const { errors } = formState;
 
-  const queryClient = useQueryClient();
-
-  const { mutate: createCabin, isLoading: isCreating } = useMutation({
-    mutationFn: createEditCabin,
-    onSuccess: () => {
-      toast.success("New cabin sucessfully created");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-    onError: (err: any) => {
-      toast.error(err?.message);
-    },
-  });
-
-  const { mutate: editCabin, isLoading: isEditing } = useMutation({
-    mutationFn: ({ newCabinData }: PassingParams) =>
-      createEditCabin(newCabinData),
-    onSuccess: () => {
-      toast.success("Cabin sucessfully edited");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-    onError: (err: any) => {
-      toast.error(err?.message);
-    },
-  });
-
-  const isWorking = isCreating || isEditing;
-
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const img = typeof data.image === "string" ? data.image : data.image[0];
 
     isEditSession
-      ? editCabin({ newCabinData: { ...data, image: img, id: editId } })
-      : createCabin({ ...data, image: img });
+      ? editCabin(
+          { newCabinData: { ...data, image: img, id: editId } },
+          { onSuccess: () => reset() }
+        )
+      : createCabin({ ...data, image: img }, { onSuccess: () => reset() });
   };
 
   const onError = () => {
