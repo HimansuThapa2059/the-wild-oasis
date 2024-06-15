@@ -54,6 +54,7 @@ const Discount = styled.div`
 const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
   const [showEditForm, setShowEditForm] = useState(false);
   const { isDeleting, deleteCabin } = useDeleteCabin();
+  const { isCreating, createCabin } = useCreateCabin();
 
   const {
     id: cabinId,
@@ -64,6 +65,17 @@ const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
     regularPrice,
     description,
   } = cabin;
+
+  const handleDuplicate = () => {
+    createCabin({
+      name: `copy of ${name}`,
+      discount: discount as number,
+      image: image as string,
+      maxCapacity: maxCapacity as number,
+      regularPrice: regularPrice as number,
+      description: description as string,
+    });
+  };
 
   const handleNotFound = (
     event: React.SyntheticEvent<HTMLImageElement, Event>
@@ -87,6 +99,14 @@ const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
           <Button
             $variation="primary"
             $size="small"
+            onClick={handleDuplicate}
+            disabled={isDeleting && isCreating}
+          >
+            <HiSquare2Stack />
+          </Button>
+          <Button
+            $variation="primary"
+            $size="small"
             onClick={() => setShowEditForm((show) => !show)}
           >
             <HiPencil />
@@ -95,7 +115,7 @@ const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
             $variation="primary"
             $size="small"
             onClick={() => deleteCabin(cabinId)}
-            disabled={isDeleting}
+            disabled={isDeleting && isCreating}
           >
             <HiTrash />
           </Button>
