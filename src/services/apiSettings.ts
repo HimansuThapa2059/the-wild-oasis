@@ -1,8 +1,11 @@
 import supabase from "@/supabase/supabase";
 
-import { Database } from "@/supabase/types/database.types";
-
-type SettingTypes = Database["public"]["Tables"]["settings"]["Row"];
+interface UpdateSettingProps {
+  breakfastPrice?: number;
+  maxBookingLength?: number;
+  maxGuestsPerBooking?: number;
+  minBookingLength?: number;
+}
 
 export async function getSettings() {
   const { data, error } = await supabase.from("settings").select("*").single();
@@ -15,11 +18,10 @@ export async function getSettings() {
 }
 
 // We expect a newSetting object that looks like {setting: newValue}
-export async function updateSetting(newSetting: SettingTypes) {
+export async function updateSetting(newSetting: UpdateSettingProps) {
   const { data, error } = await supabase
     .from("settings")
     .update(newSetting)
-    // There is only ONE row of settings, and it has the ID=1, and so this is the updated one
     .eq("id", 1)
     .single();
 
