@@ -20,10 +20,9 @@ export const getCabins = async (): Promise<cabinType[]> => {
   return data as Database["public"]["Tables"]["cabins"]["Row"][];
 };
 
-export const createEditCabin = async (
+export const updateCabin = async (
   cabin: createEditCabinProps
 ): Promise<cabinType> => {
-  console.log(cabin);
   const hasImagePath = typeof cabin.image === "string";
   const imageName =
     typeof cabin.image === "string"
