@@ -20,10 +20,12 @@ type FormValues = {
 
 type CreateCabinFormProps = {
   cabinToEdit?: Database["public"]["Tables"]["cabins"]["Row"];
+  handleCloseModal?: () => void;
 };
 
 const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
   cabinToEdit = { id: undefined },
+  handleCloseModal,
 }) => {
   const { isCreating, createCabin } = useCreateCabin();
   const { isEditing, editCabin } = useEditCabin();
@@ -42,7 +44,12 @@ const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
     isEditSession
       ? editCabin(
           { newCabinData: { ...data, image: img, id: editId } },
-          { onSuccess: () => reset() }
+          {
+            onSuccess: () => {
+              reset();
+              handleCloseModal?.();
+            },
+          }
         )
       : createCabin({ ...data, image: img }, { onSuccess: () => reset() });
   };
@@ -53,7 +60,10 @@ const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={handleCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin Name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -134,7 +144,11 @@ const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button $variation="secondary" type="reset">
+        <Button
+          $variation="secondary"
+          type="reset"
+          onClick={() => handleCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isWorking}>
