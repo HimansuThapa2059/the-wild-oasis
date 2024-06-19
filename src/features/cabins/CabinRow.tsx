@@ -7,6 +7,7 @@ import { useDeleteCabin } from "./hooks/useDeleteCabin";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 import { useCreateCabin } from "./hooks/useCreateCabin";
 import Modal from "@/ui/Modal";
+import ConfirmDelete from "@/ui/ConfirmDelete";
 
 type CabinRowProps = {
   cabin: Database["public"]["Tables"]["cabins"]["Row"];
@@ -112,14 +113,20 @@ const CabinRow: React.FC<CabinRowProps> = ({ cabin }) => {
           <Modal.Window name="edit">
             <CreateCabinForm cabinToEdit={cabin} />
           </Modal.Window>
-          <Button
-            $variation="primary"
-            $size="small"
-            onClick={() => deleteCabin(cabinId)}
-            disabled={isDeleting && isCreating}
-          >
-            <HiTrash />
-          </Button>
+
+          <Modal.Open opens="confirmDelete">
+            <Button $variation="primary" $size="small" disabled={isDeleting}>
+              <HiTrash />
+            </Button>
+          </Modal.Open>
+          <Modal.Window name="confirmDelete">
+            <ConfirmDelete
+              resourceName="cabins"
+              disabled={isDeleting}
+              isDeleting={isDeleting}
+              onConfirm={() => deleteCabin(cabinId)}
+            />
+          </Modal.Window>
         </Modal>
       </div>
     </TableRow>

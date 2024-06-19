@@ -2,12 +2,21 @@ import styled from "styled-components";
 import Button from "./Button";
 import Heading from "./Heading";
 import { FC } from "react";
+import SpinnerMini from "./SpinnerMini";
 
 type ConfirmDeleteProps = {
   resourceName: string;
   onConfirm: () => void;
   disabled: boolean;
+  isDeleting: boolean;
+  handleCloseModal?: () => void;
 };
+
+const FlexedButton = styled(Button)`
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+`;
 
 const StyledConfirmDelete = styled.div`
   width: 40rem;
@@ -31,6 +40,8 @@ const ConfirmDelete: FC<ConfirmDeleteProps> = ({
   resourceName,
   onConfirm,
   disabled,
+  isDeleting,
+  handleCloseModal,
 }) => {
   return (
     <StyledConfirmDelete>
@@ -41,12 +52,21 @@ const ConfirmDelete: FC<ConfirmDeleteProps> = ({
       </p>
 
       <div>
-        <Button variation="secondary" disabled={disabled}>
+        <Button
+          $variation="secondary"
+          disabled={disabled}
+          onClick={() => handleCloseModal?.()}
+        >
           Cancel
         </Button>
-        <Button variation="danger" disabled={disabled}>
-          Delete
-        </Button>
+        <FlexedButton
+          $variation="danger"
+          disabled={disabled}
+          onClick={onConfirm}
+        >
+          {isDeleting && <SpinnerMini />}
+          <span>Delete</span>
+        </FlexedButton>
       </div>
     </StyledConfirmDelete>
   );
