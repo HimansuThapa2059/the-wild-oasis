@@ -1,3 +1,10 @@
+import {
+  createContext,
+  useContext,
+  useState,
+  cloneElement,
+  ReactElement,
+} from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
@@ -44,30 +51,69 @@ const Button = styled.button`
   & svg {
     width: 2.4rem;
     height: 2.4rem;
-    /* Sometimes we need both */
-    /* fill: var(--color-grey-500);
-    stroke: var(--color-grey-500); */
     color: var(--color-grey-500);
   }
 `;
 
-type ModalProps = {
-  children: React.ReactNode;
-  handleClose: () => void;
+type WindowProps = {
+  children: ReactElement;
+  name: string;
 };
 
-const Modal: React.FC<ModalProps> = ({ children, handleClose }) => {
+type OpenProps = {
+  children: React.ReactElement;
+  opens: string;
+};
+
+type ContextType = {
+  openedWindow: string;
+  open: (name: string) => void;
+  close: () => void;
+};
+
+// Specify the type parameter for createContext and use as ContextType
+const ModalContext = createContext<ContextType>({
+  openedWindow: "",
+  open: () => {},
+  close: () => {},
+});
+
+const Modal = ({ children }: { children: React.ReactNode }) => {
+  const [openedWindow, setOpenedWindow] = useState("");
+
+  const close = () => setOpenedWindow("");
+  const open = (name: string) => setOpenedWindow(name);
+
+  return (
+    <ModalContext.Provider value={{ openedWindow, open, close }}>
+      {children}
+    </ModalContext.Provider>
+  );
+};
+
+const Open = ({ children, opens }: OpenProps) => {
+  const { open } = useContext(ModalContext) as ContextType; // Assert useContext result as ContextType
+  return cloneElement(children, { onClick: () => open(opens) });
+};
+
+const Window: React.FC<WindowProps> = ({ children, name }) => {
+  const { openedWindow, close } = useContext(ModalContext) as ContextType; // Assert useContext result as ContextType
+
+  if (name !== openedWindow) return null;
   return createPortal(
     <Overlay>
       <StyledModal>
-        <Button onClick={handleClose}>
+        <Button onClick={close}>
           <HiXMark />
         </Button>
-        <div>{children}</div>
+        <div>{cloneElement(children, { handleCloseModal: close })}</div>
       </StyledModal>
     </Overlay>,
     document.body
   );
 };
+
+Modal.Open = Open;
+Modal.Window = Window;
 
 export default Modal;

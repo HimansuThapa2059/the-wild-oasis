@@ -46,8 +46,8 @@ const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
           { newCabinData: { ...data, image: img, id: editId } },
           {
             onSuccess: () => {
-              reset();
               handleCloseModal?.();
+              reset();
             },
           }
         )
