@@ -1,9 +1,12 @@
+import useOutsideClick from "@/hooks/useOutsideClick";
 import {
   createContext,
   useContext,
   useState,
   cloneElement,
   ReactElement,
+  useEffect,
+  useRef,
 } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
@@ -71,7 +74,6 @@ type ContextType = {
   close: () => void;
 };
 
-// Specify the type parameter for createContext and use as ContextType
 const ModalContext = createContext<ContextType>({
   openedWindow: "",
   open: () => {},
@@ -92,17 +94,20 @@ const Modal = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Open = ({ children, opens }: OpenProps) => {
-  const { open } = useContext(ModalContext) as ContextType; // Assert useContext result as ContextType
+  const { open } = useContext(ModalContext) as ContextType;
   return cloneElement(children, { onClick: () => open(opens) });
 };
 
 const Window: React.FC<WindowProps> = ({ children, name }) => {
-  const { openedWindow, close } = useContext(ModalContext) as ContextType; // Assert useContext result as ContextType
+  const { openedWindow, close } = useContext(ModalContext) as ContextType;
+
+  const modalRef = useOutsideClick(close, true);
 
   if (name !== openedWindow) return null;
+
   return createPortal(
     <Overlay>
-      <StyledModal>
+      <StyledModal ref={modalRef}>
         <Button onClick={close}>
           <HiXMark />
         </Button>
