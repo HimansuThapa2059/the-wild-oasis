@@ -51,7 +51,15 @@ const CreateCabinForm: React.FC<CreateCabinFormProps> = ({
             },
           }
         )
-      : createCabin({ ...data, image: img }, { onSuccess: () => reset() });
+      : createCabin(
+          { ...data, image: img },
+          {
+            onSuccess: () => {
+              handleCloseModal?.();
+              reset();
+            },
+          }
+        );
   };
 
   const onError = () => {

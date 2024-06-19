@@ -5,8 +5,6 @@ import {
   useState,
   cloneElement,
   ReactElement,
-  useEffect,
-  useRef,
 } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";

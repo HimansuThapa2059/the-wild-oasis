@@ -1,12 +1,12 @@
 import { Database } from "@/supabase/types/database.types";
 import Button from "@/ui/Button";
 import { formatCurrency } from "@/utils/helpers";
-import { FC, useState } from "react";
 import styled from "styled-components";
 import CreateCabinForm from "./CreateCabinForm";
 import { useDeleteCabin } from "./hooks/useDeleteCabin";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 import { useCreateCabin } from "./hooks/useCreateCabin";
+import Modal from "@/ui/Modal";
 
 type CabinRowProps = {
   cabin: Database["public"]["Tables"]["cabins"]["Row"];
@@ -51,8 +51,7 @@ const Discount = styled.div`
   color: var(--color-green-700);
 `;
 
-const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
-  const [showEditForm, setShowEditForm] = useState(false);
+const CabinRow: React.FC<CabinRowProps> = ({ cabin }) => {
   const { isDeleting, deleteCabin } = useDeleteCabin();
   const { isCreating, createCabin } = useCreateCabin();
 
@@ -84,33 +83,35 @@ const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
   };
 
   return (
-    <>
-      <TableRow role="row">
-        <Img src={image ? image : ""} onError={handleNotFound} />
-        <Cabin>{name}</Cabin>
-        <div>Fits up to {maxCapacity} guests</div>
-        <Price>{regularPrice ? formatCurrency(regularPrice) : ""}</Price>
-        {discount ? (
-          <Discount>{formatCurrency(discount)}</Discount>
-        ) : (
-          <span>&mdash;</span>
-        )}
-        <div>
-          <Button
-            $variation="primary"
-            $size="small"
-            onClick={handleDuplicate}
-            disabled={isDeleting && isCreating}
-          >
-            <HiSquare2Stack />
-          </Button>
-          <Button
-            $variation="primary"
-            $size="small"
-            onClick={() => setShowEditForm((show) => !show)}
-          >
-            <HiPencil />
-          </Button>
+    <TableRow role="row">
+      <Img src={image ? image : ""} onError={handleNotFound} />
+      <Cabin>{name}</Cabin>
+      <div>Fits up to {maxCapacity} guests</div>
+      <Price>{regularPrice ? formatCurrency(regularPrice) : ""}</Price>
+      {discount ? (
+        <Discount>{formatCurrency(discount)}</Discount>
+      ) : (
+        <span>&mdash;</span>
+      )}
+      <div>
+        <Button
+          $variation="primary"
+          $size="small"
+          onClick={handleDuplicate}
+          disabled={isDeleting && isCreating}
+        >
+          <HiSquare2Stack />
+        </Button>
+
+        <Modal>
+          <Modal.Open opens="edit">
+            <Button $variation="primary" $size="small">
+              <HiPencil />
+            </Button>
+          </Modal.Open>
+          <Modal.Window name="edit">
+            <CreateCabinForm cabinToEdit={cabin} />
+          </Modal.Window>
           <Button
             $variation="primary"
             $size="small"
@@ -119,10 +120,9 @@ const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
           >
             <HiTrash />
           </Button>
-        </div>
-      </TableRow>
-      {showEditForm && <CreateCabinForm cabinToEdit={cabin} />}
-    </>
+        </Modal>
+      </div>
+    </TableRow>
   );
 };
 
