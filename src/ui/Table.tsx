@@ -1,8 +1,15 @@
+import React, { createContext, useContext } from "react";
 import styled from "styled-components";
+
+type TableProps = {
+  columns: string;
+  children: React.ReactNode;
+};
 
 type CommonRowProps = {
   columns: string;
 };
+
 const StyledTable = styled.div`
   border: 1px solid var(--color-grey-200);
 
@@ -49,7 +56,6 @@ const Footer = styled.footer`
   justify-content: center;
   padding: 1.2rem;
 
-  /* This will hide the footer when it contains no child elements. Possible thanks to the parent selector :has 🎉 */
   &:not(:has(*)) {
     display: none;
   }
@@ -61,3 +67,57 @@ const Empty = styled.p`
   text-align: center;
   margin: 2.4rem;
 `;
+
+type ContextType = {
+  columns: string;
+};
+
+const TableContext = createContext<ContextType>({ columns: "" });
+
+const Table = ({ children, columns }: TableProps) => {
+  return (
+    <TableContext.Provider value={{ columns }}>
+      <StyledTable role="table">{children}</StyledTable>
+    </TableContext.Provider>
+  );
+};
+
+const Header = ({ children }: { children: React.ReactNode }) => {
+  const { columns } = useContext(TableContext);
+  return (
+    <StyledHeader role="row" as="header" columns={columns}>
+      {children}
+    </StyledHeader>
+  );
+};
+const Row = ({ children }: { children: React.ReactNode }) => {
+  const { columns } = useContext(TableContext);
+  return (
+    <StyledRow role="row" columns={columns}>
+      {children}
+    </StyledRow>
+  );
+};
+
+// const Body = ({ data, render }) => {
+//   if (!data.length) return <Empty>No data to show in the table</Empty>>;
+//   return <StyledBody>{data.map(render)}</StyledBody>;
+// };
+
+const Body = ({
+  data,
+  render,
+}: {
+  data: any[] | undefined;
+  render: (item: any) => React.ReactNode;
+}) => {
+  if (!data?.length) return <Empty>No data to show in the table</Empty>;
+  return <StyledBody>{data.map(render)}</StyledBody>;
+};
+
+Table.Header = Header;
+Table.Row = Row;
+Table.Body = Body;
+Table.Footer = Footer;
+
+export default Table;
